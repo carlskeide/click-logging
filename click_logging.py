@@ -5,12 +5,13 @@ from collections import namedtuple
 
 import click
 
-__version__ = "0.7.1"
+__version__ = "0.7.4"
 
 __all__ = ["ClickLoggingHandler",
            "ClickLoggingFormatter",
            "progressbar",
-           "basicConfig"]
+           "basicConfig",
+           "getLogger"]
 
 _format = namedtuple("log_format", ("prefix", "style"))
 
@@ -80,14 +81,24 @@ def progressbar(iterator, verbosity, length=None):
         yield iterator
 
 
-def _basic_config(level=logging.INFO, style=True):
+def _basic_config(level=logging.INFO, style=True, override=False):
     """ Initialize and return a boilerplate logging environment for click.
 
-    :param log_level: Initial log level for the root logging handler.
-    :type log_level: int
+    :param level: Initial log level for the root logger.
+    :type level: int
+    :param style: Whether to style message prefixes with ANSI colors.
+    :type style: bool
+    :param override: Whether to override any existing root logger handlers.
+    :type override: bool
     """
 
-    root_logger = logging.getLogger("")
+    root_logger = logging.getLogger(None)
+    if root_logger.handlers:
+        if override:
+            root_logger.handlers = []
+        else:
+            return False
+
     root_logger.setLevel(level)
 
     click_log_handler = ClickLoggingHandler()
@@ -97,5 +108,23 @@ def _basic_config(level=logging.INFO, style=True):
     root_logger.addHandler(click_log_handler)
 
 
+
+def _get_logger(name=None, level=None):
+    """ Proxy for logging.getLogger, with some attributes inlined.
+
+    :param name: The logger's name, or empty/None for the root logger.
+    :type name: str
+    :param level: Initial log level for the logging handler.
+    :type level: int
+    """
+
+    logger = logging.getLogger(name)
+    if level is not None:
+        logger.setLevel(level)
+
+    return logger
+
+
 # PEP8 compatibility kludge
 basicConfig = _basic_config
+getLogger = _get_logger
