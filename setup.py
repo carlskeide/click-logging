@@ -1,10 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+
+import click_logging
 
 setup(name="click_logging",
-      version='0.7.0',
-      options={},
+      version=click_logging.__version__,
       description='Stylish logger for click-based applications',
       author='Carl Skeide',
-      packages=find_packages(),
+      py_modules=["click_logging"],
       install_requires=["logging",
                         "click"])

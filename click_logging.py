@@ -1,16 +1,18 @@
 import sys
 import logging
 from contextlib import contextmanager
-from collections import namedTuple
+from collections import namedtuple
 
 import click
+
+__version__ = "0.7.1"
 
 __all__ = ["ClickLoggingHandler",
            "ClickLoggingFormatter",
            "progressbar",
            "basicConfig"]
 
-_format = namedTuple("log_format", ("prefix", "style"))
+_format = namedtuple("log_format", ("prefix", "style"))
 
 LEVEL_FORMATS = {
     "CRITICAL": _format("[c]", {"fg": "red", "bold": True, "blink": True}),
@@ -78,7 +80,7 @@ def progressbar(iterator, verbosity, length=None):
         yield iterator
 
 
-def _basic_config(level=logging.INFO):
+def _basic_config(level=logging.INFO, style=True):
     """ Initialize and return a boilerplate logging environment for click.
 
     :param log_level: Initial log level for the root logging handler.
@@ -89,7 +91,7 @@ def _basic_config(level=logging.INFO):
     root_logger.setLevel(level)
 
     click_log_handler = ClickLoggingHandler()
-    click_log_formatter = ClickLoggingFormatter(style=True)
+    click_log_formatter = ClickLoggingFormatter(style=style)
     click_log_handler.setFormatter(click_log_formatter)
 
     root_logger.addHandler(click_log_handler)
