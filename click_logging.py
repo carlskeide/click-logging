@@ -5,8 +5,6 @@ from collections import namedtuple
 
 import click
 
-__version__ = "0.7.4"
-
 __all__ = ["ClickLoggingHandler",
            "ClickLoggingFormatter",
            "progressbar",
